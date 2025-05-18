@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/w.png" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zender's Panel</title>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .mb-1 {
+      margin-bottom: 10px;
+    }
+
+    .copyright {
+      display: flex;
+      justify-content: end;
+      font-size: 10px;
+      font-style: italic;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 30px 40px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h2 {
+      color: #128C7E;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    label {
+      margin-top: 15px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input[type="file"],
+    textarea,
+    input[type="text"],
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 15px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 20px;
+      background-color: #25D366;
+      color: white;
+      border: none;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #1ebe5b;
+    }
+
+    #status {
+      margin-top: 25px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    #status p {
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2>📤 WhatsApp Bulk Sender</h2>
+    <form id="messageForm" enctype="multipart/form-data">
+      <label for="file">📁 Upload Excel (.xlsx with "Number" column):</label>
+      <input type="file" id="file" class="mb-1" name="file" accept=".xlsx" required>
+
+      <label for="message" >💬 Message:</label>
+      <textarea id="message" class="mb-1" name="message" rows="4" placeholder="Type your message..." required></textarea>
+
+      <label for="media">📎 Optional Media (Image/Video):</label>
+      <input type="file" id="media" class="mb-1" name="media" accept="image/*,video/*">
+
+      <button type="submit">🚀 Send Messages</button>
+    </form>
+
+    <div id="status"></div>
+    <span class="copyright">Developed by Haseeb</span>
+  </div>
+
+  <script>
+    document.getElementById('messageForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('file', document.getElementById('file').files[0]);
+      formData.append('message', document.getElementById('message').value);
+
+      const mediaInput = document.getElementById('media');
+      if (mediaInput.files.length > 0) {
+        formData.append('media', mediaInput.files[0]);
+      }
+
+      document.getElementById('status').innerHTML = "⏳ Sending messages... Please wait.";
+
+      fetch('/send-messages', {
+        method: 'POST',
+        body: formData,
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'done') {
+            document.getElementById('messageForm').reset();
+            document.getElementById('status').innerHTML =
+              `<button onclick="window.location.href='logs.html'" style="margin-top:10px; padding:8px; background:#128C7E; color:white; border:none; border-radius:5px; cursor:pointer;">📖 See the Logs</button>`;
+          } else {
+            if (data.message.includes('WhatsApp client not ready')) {
+              document.getElementById('status').innerHTML = `
+      <p style="color:red;">⚠️ WhatsApp is not connected. Please scan the QR again.</p>
+      <button onclick="window.location.href='index.html'" style="margin-top:10px; padding:8px; background:#128C7E; color:white; border:none; border-radius:5px; cursor:pointer;">🔁 Go to QR Page</button>`;
+            } else {
+              document.getElementById('status').innerHTML = `<p style="color:red;">❌ ${data.message}</p>`;
+            }
+          }
+
+        })
+        .catch(error => {
+          document.getElementById('status').innerHTML = `<p style="color:red;">❌ Error: ${error.message}</p>`;
+        });
+    });
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Zender's Sent Logs</title>
+    <link rel="icon" href="/w.png" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            color: #444;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        #downloadBtn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        #downloadBtn:hover {
+            background-color: #0056b3;
+        }
+
+        .backbtn {
+            background-color: rgb(42, 129, 42);
+            border-radius: 5px;
+            text-decoration: none;
+            padding: 5px;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f9fafc;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f6f8fa;
+        }
+
+        .status-sent {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-failed {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>📋 Sent Message Logs</h2>
+        <button id="downloadBtn">⬇️ Download Logs as Excel</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>📱 Number</th>
+                    <th>💬 Message</th>
+                    <th>⏰ Time</th>
+                    <th>📌 Status</th>
+                </tr>
+            </thead>
+            <tbody id="logTable"></tbody>
+        </table>
+        <a href="form.html" class="backbtn">Back to home</a>
+    </div>
+
+    <script>
+        fetch('/logs')
+            .then(res => res.json())
+            .then(logs => {
+                const table = document.getElementById('logTable');
+                logs.forEach(log => {
+                    const statusClass = log.status === 'sent' ? 'status-sent' : 'status-failed';
+                    const row = `<tr>
+            <td>+${log.number}</td>
+            <td>${log.message || ''}</td>
+            <td>${new Date(log.time).toLocaleString()}</td>
+            <td class="${statusClass}">${log.status}</td>
+          </tr>`;
+                    table.innerHTML += row;
+                });
+            });
+
+        // Download logs as Excel
+        function downloadLogsAsExcel(logs) {
+            const ws = XLSX.utils.json_to_sheet(logs);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Logs");
+
+            const excelFile = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
+            const buffer = new ArrayBuffer(excelFile.length);
+            const view = new Uint8Array(buffer);
+            for (let i = 0; i < excelFile.length; i++) {
+                view[i] = excelFile.charCodeAt(i) & 0xff;
+            }
+
+            const blob = new Blob([buffer], { type: "application/octet-stream" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "logs.xlsx";
+            link.click();
+        }
+
+        // Button click to trigger download
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            fetch('/logs')
+                .then(response => response.json())
+                .then(data => downloadLogsAsExcel(data))
+                .catch(err => console.error('Error fetching logs:', err));
+        });
+    </script>
+</body>
+
+</html>

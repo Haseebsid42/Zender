@@ -1,0 +1,23 @@
+{
+  "name": "project_via_nodejs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "fs": "^0.0.1-security",
+    "multer": "^1.4.5-lts.2",
+    "path": "^0.12.7",
+    "puppeteer": "^24.8.2",
+    "qrcode": "^1.5.4",
+    "whatsapp-web.js": "^1.27.0",
+    "xlsx": "^0.18.5"
+  }
+}

@@ -1,0 +1,36 @@
+[
+  {
+    "number": "974399832883333",
+    "time": "2025-05-18T07:35:52.678Z",
+    "message": "now it is working fine 👌",
+    "status": "not_registered",
+    "error_message": "Number is not registered on WhatsApp"
+  },
+  {
+    "number": "91914076988133",
+    "time": "2025-05-18T07:35:52.969Z",
+    "message": "now it is working fine 👌",
+    "status": "not_registered",
+    "error_message": "Number is not registered on WhatsApp"
+  },
+  {
+    "number": "1456225966",
+    "time": "2025-05-18T07:35:53.276Z",
+    "message": "now it is working fine 👌",
+    "status": "not_registered",
+    "error_message": "Number is not registered on WhatsApp"
+  },
+  {
+    "number": "14562259664455",
+    "time": "2025-05-18T07:35:53.617Z",
+    "message": "now it is working fine 👌",
+    "status": "not_registered",
+    "error_message": "Number is not registered on WhatsApp"
+  },
+  {
+    "number": "919140769881",
+    "time": "2025-05-18T07:35:58.532Z",
+    "message": "now it is working fine 👌",
+    "status": "sent"
+  }
+]
